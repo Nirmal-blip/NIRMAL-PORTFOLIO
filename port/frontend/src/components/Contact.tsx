@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi'
 import { SiGithub, SiLinkedin, SiX, SiInstagram } from 'react-icons/si'
+import { contactAPI } from '../utils/api'
 
 const schema = z.object({
   name: z.string().min(2, 'Name is too short'),
@@ -61,19 +62,7 @@ export default function Contact() {
       setLoading(true)
       setError(null)
       
-      const response = await fetch('http://localhost:3000/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to send message')
-      }
+      await contactAPI.sendMessage(data)
 
       setSent(true)
       reset()
