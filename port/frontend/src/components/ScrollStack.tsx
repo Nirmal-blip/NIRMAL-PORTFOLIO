@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface ScrollStackItemProps {
@@ -44,10 +44,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
-      <motion.div
-        style={{ y, scale, opacity }}
-        className="relative"
-      >
+      <motion.div style={{ y, scale, opacity }} className="relative">
         {children}
       </motion.div>
     </div>

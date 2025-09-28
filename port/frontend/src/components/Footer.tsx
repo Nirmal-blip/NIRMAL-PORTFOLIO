@@ -19,7 +19,7 @@ const item = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: [0.6, -0.05, 0.01, 0.99],
+      ease: [0.6, -0.05, 0.01, 0.99], // ✅ cubic bezier is fine
     },
   },
 }
@@ -30,7 +30,7 @@ const linkVariants = {
     color: '#8eecf5',
     transition: {
       duration: 0.3,
-      ease: 'easeOut',
+      ease: [0.25, 0.1, 0.25, 1], // ✅ replaced 'easeOut' with cubic bezier
     },
   },
 }

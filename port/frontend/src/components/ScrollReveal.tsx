@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 
 interface ScrollRevealProps {
@@ -43,23 +43,12 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         scale
       }}
       initial={{ opacity: baseOpacity, y: 100, rotate: baseRotation }}
-      animate={isInView ? { 
-        opacity: 1, 
-        y: 0, 
-        rotate: 0,
-        filter: 'blur(0px)',
-        scale: 1
-      } : { 
-        opacity: baseOpacity, 
-        y: 100, 
-        rotate: baseRotation,
-        filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
-        scale: 0.8
-      }}
-      transition={{
-        duration: 0.8,
-        ease: 'easeOut'
-      }}
+      animate={
+        isInView
+          ? { opacity: 1, y: 0, rotate: 0, filter: 'blur(0px)', scale: 1 }
+          : { opacity: baseOpacity, y: 100, rotate: baseRotation, filter: enableBlur ? `blur(${blurStrength}px)` : 'none', scale: 0.8 }
+      }
+      transition={{ duration: 0.8, ease: 'easeOut' }}
     >
       {children}
     </motion.div>

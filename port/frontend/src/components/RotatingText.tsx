@@ -27,15 +27,10 @@ const RotatingText: React.FC<RotatingTextProps> = ({
   rotationInterval = 2000
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % texts.length);
-        setIsAnimating(false);
-      }, 300);
+      setCurrentIndex((prev) => (prev + 1) % texts.length);
     }, rotationInterval);
 
     return () => clearInterval(interval);
@@ -46,12 +41,19 @@ const RotatingText: React.FC<RotatingTextProps> = ({
       <motion.span
         key={index}
         className={`inline-block ${splitLevelClassName}`}
-        initial={staggerFrom === 'first' ? initial : { ...initial, delay: index * staggerDuration }}
+        initial={
+          staggerFrom === 'first'
+            ? initial
+            : { ...initial, delay: index * staggerDuration }
+        }
         animate={animate}
         exit={exit}
         transition={{
           ...transition,
-          delay: staggerFrom === 'first' ? index * staggerDuration : (texts[currentIndex].length - index) * staggerDuration
+          delay:
+            staggerFrom === 'first'
+              ? index * staggerDuration
+              : (texts[currentIndex].length - index) * staggerDuration
         }}
       >
         {char === ' ' ? '\u00A0' : char}
