@@ -1,5 +1,5 @@
 // API configuration utility
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://nirmal-portfolio123.vercel.app/'
 
 export const apiConfig = {
   baseURL: API_BASE_URL,
@@ -35,7 +35,7 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 }
 
 // Specific API functions
-export const contactAPI = {
+export const xcontactAPI = {
   sendMessage: async (data: {
     name: string
     email: string
