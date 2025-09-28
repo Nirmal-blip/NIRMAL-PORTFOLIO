@@ -9,6 +9,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for rate limiting (required for Render, Heroku, etc.)
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
@@ -52,6 +55,12 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Trust proxy for accurate IP detection
+  trustProxy: true,
+  // Skip successful requests from rate limiting
+  skipSuccessfulRequests: false,
+  // Skip failed requests from rate limiting  
+  skipFailedRequests: false
 });
 
 // Apply rate limiting to contact route
