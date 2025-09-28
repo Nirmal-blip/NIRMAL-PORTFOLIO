@@ -61,9 +61,18 @@ app.use('/api/contact', limiter);
 const createTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD
+    },
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000, // 30 seconds
+    socketTimeout: 60000, // 60 seconds
+    tls: {
+      rejectUnauthorized: false
     }
   });
 };
@@ -176,10 +185,27 @@ app.post('/api/contact', contactValidation, async (req, res) => {
 
   } catch (error) {
     console.error('Error sending email:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+    
+    // Determine specific error message
+    let errorMessage = 'Sorry, there was an error sending your message. Please try again later.';
+    
+    if (error.code === 'ECONNECTION' || error.message.includes('Connection timeout')) {
+      errorMessage = 'Email service is temporarily unavailable. Please try again later.';
+    } else if (error.code === 'EAUTH') {
+      errorMessage = 'Email authentication failed. Please contact support.';
+    } else if (error.code === 'ENOTFOUND') {
+      errorMessage = 'Email service is not available. Please try again later.';
+    }
     
     res.status(500).json({
       success: false,
-      message: 'Sorry, there was an error sending your message. Please try again later.',
+      message: errorMessage,
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
@@ -209,19 +235,28 @@ app.post('/api/test-email', async (req, res) => {
 
     const transporter = createTransporter();
     
-    // Test connection
-    await transporter.verify();
+    // Test connection with timeout
+    const verifyPromise = transporter.verify();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Connection timeout after 30 seconds')), 30000)
+    );
+    
+    await Promise.race([verifyPromise, timeoutPromise]);
     
     res.status(200).json({
       success: true,
       message: 'Gmail configuration is valid',
-      gmailUser: process.env.GMAIL_USER
+      gmailUser: process.env.GMAIL_USER,
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
+    console.error('Gmail test error:', error);
     res.status(500).json({
       success: false,
       message: 'Gmail configuration error',
-      error: error.message
+      error: error.message,
+      code: error.code,
+      timestamp: new Date().toISOString()
     });
   }
 });
