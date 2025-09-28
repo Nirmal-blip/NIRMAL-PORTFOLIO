@@ -7,7 +7,6 @@ import Lenis from 'lenis'
 function Root() {
   useEffect(() => {
     const lenis = new Lenis({
-      smooth: true, // ✅ replaces smoothWheel + smoothTouch
       wheelMultiplier: 1.5,
       touchMultiplier: 2,
       duration: 0.8,
